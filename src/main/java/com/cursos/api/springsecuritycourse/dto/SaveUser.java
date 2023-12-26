@@ -45,4 +45,14 @@ public class SaveUser implements Serializable {
     public void setRepeatedPassword(String repeatedPassword) {
         this.repeatedPassword = repeatedPassword;
     }
+
+    @Override
+    public String toString() {
+        return "SaveUser{" +
+                "name='" + name + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", repeatedPassword='" + repeatedPassword + '\'' +
+                '}';
+    }
 }
