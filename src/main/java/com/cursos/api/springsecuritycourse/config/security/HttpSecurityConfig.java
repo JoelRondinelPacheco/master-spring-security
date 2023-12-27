@@ -9,21 +9,25 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class HttpSecurityConfig {
 
     @Autowired private AuthenticationProvider daoAuthProvider;
+   // @Autowired private JwtAuthenticationFilter jwtAuthenticationFilter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         SecurityFilterChain filterChain = http
                 .csrf(csrfConfig -> csrfConfig.disable())
                 .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(daoAuthProvider)
+                //.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authRequestConfig -> {
                     authRequestConfig.requestMatchers(HttpMethod.POST, "/customers").permitAll();
-                    authRequestConfig.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
+                    authRequestConfig.requestMatchers(HttpMethod.POST, "/auth/authenticate").permitAll();
+                    authRequestConfig.requestMatchers(HttpMethod.GET, "/auth/validate").permitAll();
                     authRequestConfig.anyRequest().authenticated();
                 })
                 .build();

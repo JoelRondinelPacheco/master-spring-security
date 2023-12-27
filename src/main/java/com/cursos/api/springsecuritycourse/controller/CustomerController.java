@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
@@ -20,7 +24,7 @@ public class CustomerController {
     private AuthenticationService authenticationService;
 
     @PostMapping
-    public ResponseEntity<RegisteredUser> registerOne(@RequestBody @Valid SaveUser newUser) {
+    public ResponseEntity<RegisteredUser> registerOne(@RequestBody @Valid SaveUser newUser) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         RegisteredUser registeredUser = authenticationService.registerOneCustomer(newUser);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
