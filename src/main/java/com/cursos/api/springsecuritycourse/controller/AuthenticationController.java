@@ -2,6 +2,7 @@ package com.cursos.api.springsecuritycourse.controller;
 
 import com.cursos.api.springsecuritycourse.dto.auth.AuthenticationRequest;
 import com.cursos.api.springsecuritycourse.dto.auth.AuthenticationResponse;
+import com.cursos.api.springsecuritycourse.persistence.entity.User;
 import com.cursos.api.springsecuritycourse.service.auth.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,5 +30,11 @@ public class AuthenticationController {
         AuthenticationResponse res = authenticationService.login(authenticationRequest);
 
         return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<User> findMyProfile() {
+        User user = this.authenticationService.findLoggedUser();
+        return ResponseEntity.ok(user);
     }
 }

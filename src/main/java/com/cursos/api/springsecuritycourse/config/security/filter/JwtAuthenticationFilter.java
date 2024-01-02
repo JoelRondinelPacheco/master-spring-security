@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -36,7 +37,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         //2. Obtener JWT desde encabezado
         String jwt = authorizationHeader.split(" ")[1];
-        System.out.println(jwt);
         //3. Obtener subject/username desde el token
 
         try {
@@ -47,8 +47,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     username, null, user.getAuthorities()
             );
+            authToken.setDetails(new WebAuthenticationDetails(request));
+
             SecurityContextHolder.getContext().setAuthentication(authToken);
             //5. Ejecutra el resto de filtros
+            System.out.println(user.getId());
             filterChain.doFilter(request, response);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.out.println("EXPECIONS");
@@ -57,8 +60,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
-
-
     }
 }

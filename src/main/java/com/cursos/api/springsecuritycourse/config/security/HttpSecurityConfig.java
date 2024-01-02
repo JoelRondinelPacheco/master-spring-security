@@ -1,6 +1,7 @@
 package com.cursos.api.springsecuritycourse.config.security;
 
 import com.cursos.api.springsecuritycourse.config.security.filter.JwtAuthenticationFilter;
+import com.cursos.api.springsecuritycourse.persistence.utils.RolePermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,11 +26,26 @@ public class HttpSecurityConfig {
                 .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(daoAuthProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(authRequestConfig -> {
-                    authRequestConfig.requestMatchers(HttpMethod.POST, "/customers").permitAll();
-                    authRequestConfig.requestMatchers(HttpMethod.POST, "/auth/authenticate").permitAll();
-                    authRequestConfig.requestMatchers(HttpMethod.GET, "/auth/validate").permitAll();
-                    authRequestConfig.anyRequest().authenticated();
+                .authorizeHttpRequests(req -> {
+                    // Products endpoints
+                    req.requestMatchers(HttpMethod.GET, "/products").hasAuthority(RolePermission.READ_ALL_PRODUCTS.name());
+                    req.requestMatchers(HttpMethod.GET, "/products/{productId}").hasAuthority(RolePermission.READ_ONE_PRODUCT.name());
+                    req.requestMatchers(HttpMethod.POST, "/products").hasAuthority(RolePermission.CREATE_ONE_PRODUCT.name());
+                    req.requestMatchers(HttpMethod.GET, "/products/{productId}").hasAuthority(RolePermission.UPDATE_ONE_PRODUCT.name());
+                    req.requestMatchers(HttpMethod.PUT).hasAuthority(RolePermission.DISABLE_ONE_PRODUCT.name());
+                    //Category endpoints
+                    req.requestMatchers(HttpMethod.GET, "/categories").hasAuthority(RolePermission.READ_ONE_CATEGORY.name());
+                    req.requestMatchers(HttpMethod.GET, "/categories/{categoriesId}").hasAuthority(RolePermission.READ_ONE_CATEGORY.name());
+                    req.requestMatchers(HttpMethod.POST, "/categories").hasAuthority(RolePermission.CREATE_ONE_CATEGORY.name());
+                    req.requestMatchers(HttpMethod.GET, "/categories/{categoriesId}").hasAuthority(RolePermission.UPDATE_ONE_CATEGORY.name());
+                    req.requestMatchers(HttpMethod.PUT).hasAuthority(RolePermission.DISABLE_ONE_CATEGORY.name());
+
+
+                    //Public endpoints
+                    req.requestMatchers(HttpMethod.POST, "/categories").permitAll();
+                    req.requestMatchers(HttpMethod.POST, "/auth/authenticate").permitAll();
+                    req.requestMatchers(HttpMethod.GET, "/auth/validate").permitAll();
+                    req.anyRequest().authenticated();
                 })
                 .build();
 
