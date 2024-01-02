@@ -1,5 +1,6 @@
 package com.cursos.api.springsecuritycourse.config.security;
 
+import com.cursos.api.springsecuritycourse.config.security.filter.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,14 +17,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class HttpSecurityConfig {
 
     @Autowired private AuthenticationProvider daoAuthProvider;
-   // @Autowired private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @Autowired private JwtAuthenticationFilter jwtAuthenticationFilter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         SecurityFilterChain filterChain = http
                 .csrf(csrfConfig -> csrfConfig.disable())
                 .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(daoAuthProvider)
-                //.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authRequestConfig -> {
                     authRequestConfig.requestMatchers(HttpMethod.POST, "/customers").permitAll();
                     authRequestConfig.requestMatchers(HttpMethod.POST, "/auth/authenticate").permitAll();
