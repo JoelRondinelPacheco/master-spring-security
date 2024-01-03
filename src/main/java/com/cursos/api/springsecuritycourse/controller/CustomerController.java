@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ public class CustomerController {
     @Autowired
     private AuthenticationService authenticationService;
 
+    @PreAuthorize("permitAll")
     @PostMapping
     public ResponseEntity<RegisteredUser> registerOne(@RequestBody @Valid SaveUser newUser) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         RegisteredUser registeredUser = authenticationService.registerOneCustomer(newUser);

@@ -21,11 +21,14 @@ public class AuthenticationController {
 
     @Autowired
     private AuthenticationService authenticationService;
+
+    @PreAuthorize("permitAll")
     @GetMapping("/validate")
     public ResponseEntity<Boolean> validate(@RequestParam String jwt) {
         boolean isValid = authenticationService.validateToken(jwt);
         return ResponseEntity.ok(isValid);
     }
+    @PreAuthorize("permitAll")
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody @Valid AuthenticationRequest authenticationRequest) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         AuthenticationResponse res = authenticationService.login(authenticationRequest);
@@ -33,7 +36,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(res);
     }
 
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'ASSISTANT_ADMINISTRATOR','CUSTOMER')")
+    @PreAuthorize("hasAuthority('READ_MY_PROFILE')")
     @GetMapping("/profile")
     public ResponseEntity<User> findMyProfile() {
         User user = this.authenticationService.findLoggedUser();

@@ -20,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(prePostEnabled = true)
 public class HttpSecurityConfig {
 
-    
+
     @Autowired private AuthenticationProvider daoAuthProvider;
     @Autowired private JwtAuthenticationFilter jwtAuthenticationFilter;
     @Bean
@@ -30,9 +30,9 @@ public class HttpSecurityConfig {
                 .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(daoAuthProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(req -> {
-                    buildRequestMatcherV2(req);
-                })
+//                .authorizeHttpRequests(req -> {
+//                    buildRequestMatcherV2(req);
+//                })
                 .build();
 
         return filterChain;
