@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
 
         ApiError error = new ApiError();
         error.setMessage("Error interno en el servidor, vuelva a intentarlo");
-        error.setBackedMessage(exception.getLocalizedMessage());
+        error.setBackendMessage(exception.getLocalizedMessage());
         error.setTime(LocalDateTime.now());
         error.setHttpCode(500);
 
@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
 
         ApiError error = new ApiError();
         error.setMessage("Accesso denegado. No tienes los permisos necesarios para acceder a esta funcion. Por favor contacta al administrador si crees que esto es un error");
-        error.setBackedMessage(exception.getLocalizedMessage());
+        error.setBackendMessage(exception.getLocalizedMessage());
         error.setTime(LocalDateTime.now());
         error.setHttpCode(403);
 
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
 
         ApiError error = new ApiError();
         error.setMessage("Error: la petición enviada posee un formato incorrecto");
-        error.setBackedMessage(exception.getLocalizedMessage());
+        error.setBackendMessage(exception.getLocalizedMessage());
         error.setTime(LocalDateTime.now());
         error.setHttpCode(400);
 

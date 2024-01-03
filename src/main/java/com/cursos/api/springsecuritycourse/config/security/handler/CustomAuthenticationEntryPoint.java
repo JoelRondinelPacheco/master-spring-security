@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         ApiError error = new ApiError();
-        error.setBackedMessage(authException.getLocalizedMessage());
+        error.setBackendMessage(authException.getLocalizedMessage());
         error.setMessage("No se encontraron credenciales de autenticacion. Por favor, inice sesion para acceder a esta funcion");
         error.setTime(LocalDateTime.now());
 

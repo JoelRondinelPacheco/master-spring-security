@@ -7,20 +7,22 @@ import java.time.LocalDateTime;
 
 public class ApiError implements Serializable {
 
-    private String backedMessage;
+    private String backendMessage;
 
     private String message;
     private int httpCode;
+    private String url;
+    private String method;
 
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private LocalDateTime time;
 
-    public String getBackedMessage() {
-        return backedMessage;
+    public String getBackendMessage() {
+        return backendMessage;
     }
 
-    public void setBackedMessage(String backedMessage) {
-        this.backedMessage = backedMessage;
+    public void setBackendMessage(String backedMessage) {
+        this.backendMessage = backedMessage;
     }
 
     public int getHttpCode() {
@@ -37,6 +39,22 @@ public class ApiError implements Serializable {
 
     public void setTime(LocalDateTime time) {
         this.time = time;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     public String getMessage() {

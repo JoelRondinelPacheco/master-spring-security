@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -27,6 +28,7 @@ public class HttpSecurityConfig {
     @Autowired private JwtAuthenticationFilter jwtAuthenticationFilter;
     @Autowired private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     @Autowired private AuthorizationManager<RequestAuthorizationContext> authorizationManager;
+    @Autowired private AccessDeniedHandler accessDeniedHandler;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         SecurityFilterChain filterChain = http
@@ -39,6 +41,7 @@ public class HttpSecurityConfig {
                 })
                 .exceptionHandling(exceptionConfig -> {
                     exceptionConfig.authenticationEntryPoint(customAuthenticationEntryPoint);
+                    exceptionConfig.accessDeniedHandler(accessDeniedHandler);
                 })
                 .build();
 
