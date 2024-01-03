@@ -34,8 +34,10 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
         HttpServletRequest request = requestContext.getRequest();
         String url = this.extractUrl(request);
         String httpMethod = request.getMethod();
-        boolean isPublic = this.isPublic(url, httpMethod);
+        System.out.println(httpMethod);
 
+        boolean isPublic = this.isPublic(url, httpMethod);
+        System.out.println(isPublic);
         if (isPublic) {
             return new AuthorizationDecision(true);
         }

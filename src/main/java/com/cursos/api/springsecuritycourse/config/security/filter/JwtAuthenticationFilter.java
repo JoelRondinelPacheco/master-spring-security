@@ -35,6 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         //1. Obtenear auth header
         //2. Obtener token
         String jwt = this.jwtService.extractJwtFromRequest(request);
+        System.out.println(jwt);
         if (jwt == null || !StringUtils.hasText(jwt)) {
             filterChain.doFilter(request, response);
             return;
@@ -42,6 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         //2.1 Obtener token no expirado y valido desde base de datos
         Optional<JwtToken> token = this.jwtRepository.findByToken(jwt);
+        System.out.println(token.get());
         boolean isValid = this.validateToken(token);
 
         if (!isValid) {
@@ -50,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         //3. Obtener subject/username desde el token
-        
+
         try {
             String username = this.jwtService.extractUsername(jwt);
             System.out.println(username);

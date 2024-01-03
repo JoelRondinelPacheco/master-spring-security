@@ -65,7 +65,7 @@ public class AuthenticationService {
 
         UserDetails user = this.userService.findOneByUsername(authRequest.getUsername()).get();
         String jwt = this.jwtService.generateToken(user, generateExtraClaims((User)user));
-        this.saveUserToken(jwt, user);
+        this.saveUserToken(jwt, (User) user);
         AuthenticationResponse res = new AuthenticationResponse();
         res.setJwt(jwt);
         return res;
@@ -75,7 +75,7 @@ public class AuthenticationService {
     private void saveUserToken(String jwt, User user) {
         JwtToken token = new JwtToken();
         token.setToken(jwt);
-        token.setUser((User) user);
+        token.setUser(user);
         token.setExpiration(jwtService.extractExpiration(jwt));
         token.setValid(true);
 
