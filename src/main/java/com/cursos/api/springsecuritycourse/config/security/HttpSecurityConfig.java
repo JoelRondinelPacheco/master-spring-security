@@ -1,13 +1,13 @@
 package com.cursos.api.springsecuritycourse.config.security;
 
 import com.cursos.api.springsecuritycourse.config.security.filter.JwtAuthenticationFilter;
-import com.cursos.api.springsecuritycourse.persistence.utils.Role;
+import com.cursos.api.springsecuritycourse.config.security.handler.CustomAuthenticationEntryPoint;
+import com.cursos.api.springsecuritycourse.persistence.utils.RoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
@@ -17,12 +17,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
+//@EnableMethodSecurity(prePostEnabled = true)
 public class HttpSecurityConfig {
 
 
     @Autowired private AuthenticationProvider daoAuthProvider;
     @Autowired private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @Autowired private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         SecurityFilterChain filterChain = http
@@ -30,9 +31,12 @@ public class HttpSecurityConfig {
                 .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(daoAuthProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-//                .authorizeHttpRequests(req -> {
-//                    buildRequestMatcherV2(req);
-//                })
+                .authorizeHttpRequests(req -> {
+                    buildRequestMatcher(req);
+                })
+                .exceptionHandling(exceptionConfig -> {
+                    exceptionConfig.authenticationEntryPoint(customAuthenticationEntryPoint);
+                })
                 .build();
 
         return filterChain;
@@ -41,34 +45,34 @@ public class HttpSecurityConfig {
     private static void buildRequestMatcher(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry req) {
         // Products endpoints
         req.requestMatchers(HttpMethod.GET, "/products")
-                .hasAnyRole(Role.ADMINISTRATOR.name(), Role.ASSISTANT_ADMINISTRATOR.name());
+                .hasAnyRole(RoleEnum.ADMINISTRATOR.name(), RoleEnum.ASSISTANT_ADMINISTRATOR.name());
         req.requestMatchers(HttpMethod.GET, "/products/{productId}")
-                .hasAnyRole(Role.ADMINISTRATOR.name(), Role.ASSISTANT_ADMINISTRATOR.name());
+                .hasAnyRole(RoleEnum.ADMINISTRATOR.name(), RoleEnum.ASSISTANT_ADMINISTRATOR.name());
         req.requestMatchers(HttpMethod.POST, "/products")
-                .hasRole(Role.ADMINISTRATOR.name());
+                .hasRole(RoleEnum.ADMINISTRATOR.name());
         req.requestMatchers(HttpMethod.PUT, "/products/{productId}")
-                .hasAnyRole(Role.ADMINISTRATOR.name(), Role.ASSISTANT_ADMINISTRATOR.name());
+                .hasAnyRole(RoleEnum.ADMINISTRATOR.name(), RoleEnum.ASSISTANT_ADMINISTRATOR.name());
         req.requestMatchers(HttpMethod.PUT, "/products/{productId}/disable")
-                .hasRole(Role.ADMINISTRATOR.name());
+                .hasRole(RoleEnum.ADMINISTRATOR.name());
         //Category endpoints
         req.requestMatchers(HttpMethod.GET, "/categories")
-                .hasAnyRole(Role.ADMINISTRATOR.name(), Role.ASSISTANT_ADMINISTRATOR.name());
+                .hasAnyRole(RoleEnum.ADMINISTRATOR.name(), RoleEnum.ASSISTANT_ADMINISTRATOR.name());
 
         req.requestMatchers(HttpMethod.GET, "/categories/{categoriesId}")
-                .hasAnyRole(Role.ADMINISTRATOR.name(), Role.ASSISTANT_ADMINISTRATOR.name());
+                .hasAnyRole(RoleEnum.ADMINISTRATOR.name(), RoleEnum.ASSISTANT_ADMINISTRATOR.name());
 
         req.requestMatchers(HttpMethod.POST, "/categories")
-                .hasRole(Role.ADMINISTRATOR.name());
+                .hasRole(RoleEnum.ADMINISTRATOR.name());
 
         req.requestMatchers(HttpMethod.PUT, "/categories/{categoriesId}")
-                .hasAnyRole(Role.ADMINISTRATOR.name(), Role.ASSISTANT_ADMINISTRATOR.name());
+                .hasAnyRole(RoleEnum.ADMINISTRATOR.name(), RoleEnum.ASSISTANT_ADMINISTRATOR.name());
 
         req.requestMatchers(HttpMethod.PUT, "/categories/{categoriesId}/disabled")
-                .hasRole(Role.ADMINISTRATOR.name());
+                .hasRole(RoleEnum.ADMINISTRATOR.name());
 
 
         //My profile
-        req.requestMatchers(HttpMethod.GET, "/auth/profile").hasAnyRole(Role.ADMINISTRATOR.name(), Role.ASSISTANT_ADMINISTRATOR.name(), Role.CUSTOMER.name());
+        req.requestMatchers(HttpMethod.GET, "/auth/profile").hasAnyRole(RoleEnum.ADMINISTRATOR.name(), RoleEnum.ASSISTANT_ADMINISTRATOR.name(), RoleEnum.CUSTOMER.name());
 
         //Public endpoints
         req.requestMatchers(HttpMethod.POST, "/categories").permitAll();
