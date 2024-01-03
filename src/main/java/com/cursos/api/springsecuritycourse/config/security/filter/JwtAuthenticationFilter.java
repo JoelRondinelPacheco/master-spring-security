@@ -26,14 +26,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired private UserService userService;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        //1. Obtener encabezado http authorization
-        String authorizationHeader = request.getHeader("Authorization");
-        if (!StringUtils.hasText(authorizationHeader) || !authorizationHeader.startsWith("Bearer ")) {
+
+        String jwt = this.jwtService.extractJwtFromRequest(request);
+        if (jwt == null || !StringUtils.hasText(jwt)) {
             filterChain.doFilter(request, response);
             return;
         }
-        //2. Obtener JWT desde encabezado
-        String jwt = authorizationHeader.split(" ")[1];
+
         //3. Obtener subject/username desde el token
 
         try {
