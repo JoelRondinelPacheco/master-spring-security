@@ -35,13 +35,14 @@ public class AuthenticationService {
     @Autowired private JwtTokenRepository jwtRepository;
     public RegisteredUser registerOneCustomer(SaveUser newUser) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         User user = this.userService.registerOneCustomer(newUser);
+        String jwt = this.jwtService.generateToken(user, generateExtraClaims(user));
+        this.saveUserToken(jwt, user);
         RegisteredUser userDto = new RegisteredUser();
         userDto.setId(user.getId());
         userDto.setName(user.getName());
         userDto.setUsername(user.getUsername());
         userDto.setRole(user.getRole().getName());
 
-        String jwt = this.jwtService.generateToken(user, generateExtraClaims(user));
         userDto.setJwt(jwt);
 
         return userDto;
@@ -64,9 +65,22 @@ public class AuthenticationService {
 
         UserDetails user = this.userService.findOneByUsername(authRequest.getUsername()).get();
         String jwt = this.jwtService.generateToken(user, generateExtraClaims((User)user));
+        this.saveUserToken(jwt, user);
         AuthenticationResponse res = new AuthenticationResponse();
         res.setJwt(jwt);
         return res;
+    }
+
+
+    private void saveUserToken(String jwt, User user) {
+        JwtToken token = new JwtToken();
+        token.setToken(jwt);
+        token.setUser((User) user);
+        token.setExpiration(jwtService.extractExpiration(jwt));
+        token.setValid(true);
+
+        jwtRepository.save(token);
+
     }
 
     public boolean validateToken(String jwt) {

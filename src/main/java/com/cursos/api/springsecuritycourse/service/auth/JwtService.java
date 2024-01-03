@@ -98,4 +98,12 @@ public class JwtService {
         }
         return authorizationHeader.split(" ")[1];
     }
+
+    public Date extractExpiration(String jwt) {
+        try {
+            return extractAllClaims(jwt).getExpiration();
+        } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
