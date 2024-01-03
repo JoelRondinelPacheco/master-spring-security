@@ -8,11 +8,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -24,6 +26,7 @@ public class HttpSecurityConfig {
     @Autowired private AuthenticationProvider daoAuthProvider;
     @Autowired private JwtAuthenticationFilter jwtAuthenticationFilter;
     @Autowired private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    @Autowired private AuthorizationManager<RequestAuthorizationContext> authorizationManager;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         SecurityFilterChain filterChain = http
@@ -32,7 +35,7 @@ public class HttpSecurityConfig {
                 .authenticationProvider(daoAuthProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(req -> {
-                    buildRequestMatcher(req);
+                    req.anyRequest().access(authorizationManager);
                 })
                 .exceptionHandling(exceptionConfig -> {
                     exceptionConfig.authenticationEntryPoint(customAuthenticationEntryPoint);
