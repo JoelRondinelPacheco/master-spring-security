@@ -29,6 +29,8 @@ public class AuthenticationController {
         boolean isValid = authenticationService.validateToken(jwt);
         return ResponseEntity.ok(isValid);
     }
+
+    //@CrossOrigin
     @PreAuthorize("permitAll")
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody @Valid AuthenticationRequest authenticationRequest) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {

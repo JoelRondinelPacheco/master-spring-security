@@ -36,6 +36,7 @@ public class AuthenticationService {
     public RegisteredUser registerOneCustomer(SaveUser newUser) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         User user = this.userService.registerOneCustomer(newUser);
         String jwt = this.jwtService.generateToken(user, generateExtraClaims(user));
+        System.out.println(jwt);
         this.saveUserToken(jwt, user);
         RegisteredUser userDto = new RegisteredUser();
         userDto.setId(user.getId());

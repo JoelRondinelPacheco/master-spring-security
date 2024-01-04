@@ -72,12 +72,12 @@ INSERT INTO granted_permission (role_id, operation_id) VALUES (3, 20);
 
 
 -- CREACIÓN DE USUARIOS
-INSERT INTO "user" (username, name, password, role_id) VALUES ('lmarquez', 'luis márquez', '$2a$10$ywh1O2EwghHmFIMGeHgsx.9lMw5IXpg4jafeFS.Oi6nFv0181gHli', 1);
-INSERT INTO "user" (username, name, password, role_id) VALUES ('fperez', 'fulano pérez', '$2a$10$V29z7/qC9wpHfzRMxGOHye5RMAxCid2/MzJalk0dsiA3zZ9CJfub.', 2);
-INSERT INTO "user" (username, name, password, role_id) VALUES ('mhernandez', 'mengano hernández', '$2a$10$TMbMuEZ8utU5iq8MOoxpmOc6QWQuYuwgx1xJF8lSMNkKP3hIrwYFG', 3);
+INSERT INTO users (username, name, password, role_id) VALUES ('lmarquez', 'luis marquez', '$2a$10$ywh1O2EwghHmFIMGeHgsx.9lMw5IXpg4jafeFS.Oi6nFv0181gHli', 1);
+INSERT INTO users (username, name, password, role_id) VALUES ('fperez', 'fulano perez', '$2a$10$V29z7/qC9wpHfzRMxGOHye5RMAxCid2/MzJalk0dsiA3zZ9CJfub.', 2);
+INSERT INTO users (username, name, password, role_id) VALUES ('mhernandez', 'mengano hernandez', '$2a$10$TMbMuEZ8utU5iq8MOoxpmOc6QWQuYuwgx1xJF8lSMNkKP3hIrwYFG', 3);
 
 -- CREACIÓN DE CATEGORIAS
-INSERT INTO category (name, status) VALUES ('Electrónica', 'ENABLED');
+INSERT INTO category (name, status) VALUES ('Electronica', 'ENABLED');
 INSERT INTO category (name, status) VALUES ('Ropa', 'ENABLED');
 INSERT INTO category (name, status) VALUES ('Deportes', 'ENABLED');
 INSERT INTO category (name, status) VALUES ('Hogar', 'ENABLED');
@@ -91,7 +91,7 @@ INSERT INTO product (name, price, status, category_id) VALUES ('Camiseta', 25.00
 INSERT INTO product (name, price, status, category_id) VALUES ('Pantalones', 35.00, 'ENABLED', 2);
 INSERT INTO product (name, price, status, category_id) VALUES ('Zapatos', 45.00, 'ENABLED', 2);
 
-INSERT INTO product (name, price, status, category_id) VALUES ('Balón de Fútbol', 20.00, 'ENABLED', 3);
+INSERT INTO product (name, price, status, category_id) VALUES ('Balon de Fútbol', 20.00, 'ENABLED', 3);
 INSERT INTO product (name, price, status, category_id) VALUES ('Raqueta de Tenis', 80.00, 'DISABLED', 3);
 
 INSERT INTO product (name, price, status, category_id) VALUES ('Aspiradora', 120.00, 'ENABLED', 4);

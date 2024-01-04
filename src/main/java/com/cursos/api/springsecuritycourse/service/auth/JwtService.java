@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -32,8 +33,7 @@ public class JwtService {
 
     @Value("${security.jwt.expiration-in-minutes}")
     private Long EXPIRATION_IN_MINUTES;
-    @Value("${security.jwt.secret-key}")
-    private String SECRET_KEY;
+
     public String generateToken(UserDetails user, Map<String, Object> extraClaims) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 
         Date issuedAt = new Date(System.currentTimeMillis());
@@ -49,17 +49,9 @@ public class JwtService {
                 .claims(extraClaims)
                 .signWith(loadPrivateKey(privateKeyResource))
                 .compact();
-
         return jwt;
     }
 
-    private SecretKey generateKey() {
-        System.out.println("KEY");
-        System.out.println(SECRET_KEY);
-        byte[] passwordDecoded = Decoders.BASE64.decode(SECRET_KEY);
-        System.out.println(new String(passwordDecoded));
-        return Keys.hmacShaKeyFor(passwordDecoded);
-    }
 
     public String extractUsername(String jwt) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException { return extractAllClaims(jwt).getSubject();}
 
@@ -68,19 +60,24 @@ public class JwtService {
         return Jwts.parser().verifyWith(loadPublicKey(publicKeyResource)).build().parseSignedClaims(jwt).getPayload();
     }
     private PrivateKey loadPrivateKey(Resource resource) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        byte[] keyBytes = Files.readAllBytes(Paths.get(resource.getURI()));
+        InputStream inputStream = resource.getInputStream();
+        byte[] keyBytes = inputStream.readAllBytes();
+
+        //keyBytes = Files.readAllBytes(Paths.get(resource.getURI()));
+
         String privateKeyPEM = new String(keyBytes, StandardCharsets.UTF_8)
                 .replace("-----BEGIN PRIVATE KEY-----", "")
                 .replace("-----END PRIVATE KEY-----", "")
                 .replaceAll("\\s", "");
-
         byte[] decodeKey = Base64.getDecoder().decode(privateKeyPEM);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+
+        KeyFactory keyFactory =  KeyFactory.getInstance("RSA");
         return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(decodeKey));
     }
 
     private PublicKey loadPublicKey(Resource resource) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        byte[] keyBytes = Files.readAllBytes(Paths.get(resource.getURI()));
+        InputStream inputStream = resource.getInputStream();
+        byte[] keyBytes = inputStream.readAllBytes();
         String publicKeyPEM = new String(keyBytes, StandardCharsets.UTF_8)
                 .replace("-----BEGIN PUBLIC KEY-----", "")
                 .replace("-----END PUBLIC KEY-----", "")
@@ -106,4 +103,6 @@ public class JwtService {
             throw new RuntimeException(e);
         }
     }
+
+
 }
